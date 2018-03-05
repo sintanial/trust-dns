@@ -339,7 +339,7 @@ pub mod tests {
                 Name::root(),
                 86400,
                 RecordType::A,
-                RData::A(Ipv4Addr::new(127, 0, 0, 1)),
+                RData::A(Ipv4Addr::new(198,51,100,1)),
             ),
         ]);
         Ok(message)
@@ -352,7 +352,7 @@ pub mod tests {
                 Name::root(),
                 86400,
                 RecordType::AAAA,
-                RData::AAAA(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1)),
+                RData::AAAA(Ipv6Addr::new(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)),
             ),
         ]);
         Ok(message)
@@ -384,7 +384,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![Ipv4Addr::new(127, 0, 0, 1)]
+            vec![Ipv4Addr::new(198,51,100,1)]
         );
     }
 
@@ -400,7 +400,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1)]
+            vec![Ipv6Addr::new(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)]
         );
     }
 
@@ -419,8 +419,8 @@ pub mod tests {
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
             vec![
-                IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)),
-                IpAddr::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1)),
+                IpAddr::V4(Ipv4Addr::new(198,51,100,1)),
+                IpAddr::V6(Ipv6Addr::new(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)),
             ]
         );
 
@@ -435,7 +435,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))]
+            vec![IpAddr::V4(Ipv4Addr::new(198,51,100,1))]
         );
 
         // error then ipv4
@@ -449,7 +449,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))]
+            vec![IpAddr::V4(Ipv4Addr::new(198,51,100,1))]
         );
 
 
@@ -464,7 +464,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![IpAddr::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1))]
+            vec![IpAddr::V6(Ipv6Addr::new(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1))]
         );
 
         // error, then only ipv6 available
@@ -478,7 +478,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![IpAddr::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1))]
+            vec![IpAddr::V6(Ipv6Addr::new(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1))]
         );
     }
 
@@ -495,7 +495,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1)]
+            vec![Ipv6Addr::new(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)]
         );
 
         // nothing then ipv4
@@ -509,7 +509,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![Ipv4Addr::new(127, 0, 0, 1)]
+            vec![Ipv4Addr::new(198,51,100,1)]
         );
 
         // ipv4 and error
@@ -523,7 +523,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![Ipv4Addr::new(127, 0, 0, 1)]
+            vec![Ipv4Addr::new(198,51,100,1)]
         );
     }
 
@@ -540,7 +540,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![Ipv4Addr::new(127, 0, 0, 1)]
+            vec![Ipv4Addr::new(198,51,100,1)]
         );
 
         // nothing then ipv6
@@ -554,7 +554,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1)]
+            vec![Ipv6Addr::new(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)]
         );
 
         // error then ipv6
@@ -568,7 +568,7 @@ pub mod tests {
                 .iter()
                 .map(|r| r.to_ip_addr().unwrap())
                 .collect::<Vec<IpAddr>>(),
-            vec![Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1)]
+            vec![Ipv6Addr::new(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)]
         );
     }
 }

@@ -164,7 +164,7 @@ enum Records {
 /// # Returns
 ///
 /// This aligns with the `filter` on `Iterator`, where true indicates that the record is good.
-fn filter_unsafe_records(record: &RData) -> bool {
+fn filter_unsafe_record(record: &RData) -> bool {
     match *record {
         // technically all 127/8 addresses map to localhost
         RData::A(a) => !a.is_loopback(), 
@@ -239,7 +239,7 @@ impl<C: DnsHandle<Error = ResolveError> + 'static> QueryFuture<C> {
                         None
                     }
                 })
-                .filter(|&(ref record, _)| filter_unsafe_records(record))
+                .filter(|&(ref record, _)| filter_unsafe_record(record))
                 .collect::<Vec<_>>();
 
             if !records.is_empty() {
@@ -613,7 +613,7 @@ mod tests {
         let cache = Arc::new(Mutex::new(DnsLru::new(1)));
         cache.lock().unwrap().insert(
             Query::new(),
-            vec![(RData::A(Ipv4Addr::new(127, 0, 0, 1)), u32::max_value())],
+            vec![(RData::A(Ipv4Addr::new(198,51,100,1)), u32::max_value())],
             Instant::now(),
         );
 
@@ -625,7 +625,7 @@ mod tests {
 
         assert_eq!(
             ips.iter().cloned().collect::<Vec<_>>(),
-            vec![RData::A(Ipv4Addr::new(127, 0, 0, 1))]
+            vec![RData::A(Ipv4Addr::new(198,51,100,1))]
         );
     }
 
@@ -641,7 +641,7 @@ mod tests {
 
         assert_eq!(
             ips.iter().cloned().collect::<Vec<_>>(),
-            vec![RData::A(Ipv4Addr::new(127, 0, 0, 1))]
+            vec![RData::A(Ipv4Addr::new(198,51,100,1))]
         );
 
         // next should come from cache...
@@ -653,7 +653,7 @@ mod tests {
 
         assert_eq!(
             ips.iter().cloned().collect::<Vec<_>>(),
-            vec![RData::A(Ipv4Addr::new(127, 0, 0, 1))]
+            vec![RData::A(Ipv4Addr::new(198,51,100,1))]
         );
     }
 
@@ -776,7 +776,7 @@ mod tests {
                 Name::from_str("actual.example.com.").unwrap(),
                 second,
                 RecordType::A,
-                RData::A(Ipv4Addr::new(127, 0, 0, 1)),
+                RData::A(Ipv4Addr::new(198,51,100,1)),
             ),
         ]);
 
