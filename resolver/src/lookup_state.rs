@@ -84,7 +84,7 @@ impl<C: DnsHandle<Error = ResolveError> + 'static> CachingClient<C> {
 
             match usage.resolver() {
                ResolverUsage::Loopback => match query.query_type() {
-                   // FIXME: look in hosts for these ips/names first...
+                   // TODO: look in hosts for these ips/names first...
                    RecordType::A => return Box::new(future::ok(LOCALHOST_V4.clone())),
                    RecordType::AAAA => return Box::new(future::ok(LOCALHOST_V6.clone())),
                    RecordType::PTR => return Box::new(future::ok(LOCALHOST.clone())),
@@ -156,6 +156,25 @@ enum Records {
     Chained { cached: Lookup, min_ttl: u32 },
 }
 
+/// Protect against remote DNS resolution mapping to localhost
+///
+/// for example, `www.example.com.` should never be `127.0.0.1`. Similarly, CNAME and SRV chains to `localhost` will
+///  be blocked.
+///
+/// # Returns
+///
+/// This aligns with the `filter` on `Iterator`, where true indicates that the record is good.
+fn filter_unsafe_records(record: &RData) -> bool {
+    match *record {
+        // technically all 127/8 addresses map to localhost
+        RData::A(a) => !a.is_loopback(), 
+        RData::AAAA(aaaa) => !aaaa.is_loopback(),
+        RData::CNAME(ref name) => !LOCALHOST_usage.zone_of(name),
+        RData::SRV(ref srv) => !LOCALHOST_usage.zone_of(srv.target()),
+        _ => true,
+    }
+}
+
 impl<C: DnsHandle<Error = ResolveError> + 'static> QueryFuture<C> {
     fn next_query(&mut self, query: Query, cname_ttl: u32, message: Message) -> Records {
         if QUERY_DEPTH.with(|c| *c.borrow() >= MAX_QUERY_DEPTH) {
@@ -208,7 +227,7 @@ impl<C: DnsHandle<Error = ResolveError> + 'static> QueryFuture<C> {
                 // Chained records will generally exist in the additionals section
                 .chain(message.take_additionals().into_iter())
                 .filter_map(|r| {
-                    // because this resobled potentially recursively, we want the min TTL from the chain
+                    // because this resolved potentially recursively, we want the min TTL from the chain
                     let ttl = cname_ttl.min(r.ttl());
                     // TODO: disable name validation with ResolverOpts?
                     // restrict to the RData type requested
@@ -220,6 +239,7 @@ impl<C: DnsHandle<Error = ResolveError> + 'static> QueryFuture<C> {
                         None
                     }
                 })
+                .filter(|&(ref record, _)| filter_unsafe_records(record))
                 .collect::<Vec<_>>();
 
             if !records.is_empty() {
