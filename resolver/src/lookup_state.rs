@@ -867,4 +867,20 @@ mod tests {
                 .is_err()
         );
     }
+
+    #[test]
+    fn test_filter_unsafe_record() {
+        assert!(!filter_unsafe_record(&RData::A(Ipv4Addr::new(127,0,0,1))));
+        assert!(!filter_unsafe_record(&RData::A(Ipv4Addr::new(127,1,0,1))));
+        assert!(filter_unsafe_record(&RData::A(Ipv4Addr::new(198,51,100,1))));
+
+        assert!(!filter_unsafe_record(&RData::AAAA(Ipv6Addr::new(0,0,0,0,0,0,0,1))));
+        assert!(filter_unsafe_record(&RData::AAAA(Ipv6Addr::new(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1))));
+
+        assert!(!filter_unsafe_record(&RData::CNAME(Name::from_str("localhost.").unwrap())));
+        assert!(filter_unsafe_record(&RData::CNAME(Name::from_str("www.example.com.").unwrap())));
+        
+        assert!(!filter_unsafe_record(&RData::SRV(SRV::new(0, 0, 0, Name::from_str("localhost.").unwrap()))));
+        assert!(filter_unsafe_record(&RData::SRV(SRV::new(0, 0, 0, Name::from_str("www.example.com.").unwrap()))));
+    }
 }
