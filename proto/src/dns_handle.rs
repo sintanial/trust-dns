@@ -212,7 +212,9 @@ where
 
                 // complete the request, it's failed...
                 req.send(Err(E::from(ProtoErrorKind::Timeout.into())))
-                    .expect("error notifying wait, possible future leak");
+                    .unwrap_or_else(|_| {
+                        error!("error stopping the resolving future by timeout, future has already completed")
+                    });
             }
         }
     }
